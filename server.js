@@ -1,14 +1,17 @@
-const express  = require('express');
-//const serveIndex = require('serve-index');
-const mysql = require('mysql');
-const connection = mysql.connection({
+import express from 'express';
+import mysql from 'mysql2';
+
+const connection = mysql.createPool({
     host: 'localhost',
-    user: 'gameshelfuser',
-    password: 'i<3grep',
-    database: 'myshelf'
-});
+    user: 'root',
+    password: 'gameSh3lfp4ss%',
+    database: 'gameShelfTest',
+    port: '3306'
+}).promise();
 
 
+const result = await connection.query('SELECT * FROM GameShelf');
+console.log(result[0]);
 
 const app = express();
 
@@ -30,8 +33,8 @@ app.use('/grep', (req, res, next) => {
     next();
 });
 
-//app.use('/public', express.static('public'));
-//app.use('/public', serveIndex('public'));
+
+connection.end();
 
 app.listen(3000, () => console.log('Example on 3000'));
 
