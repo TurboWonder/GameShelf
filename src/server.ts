@@ -1,13 +1,14 @@
 import express from 'express';
-import mysql from 'mysql2';
+import mysql, { PoolOptions } from 'mysql2';
 
-const connection = mysql.createPool({
+const access: PoolOptions = {
     host: 'localhost',
     user: 'root',
     password: 'gameSh3lfp4ss%',
     database: 'gameShelfTest',
-    port: '3306'
-}).promise();
+}
+
+const connection = mysql.createPool(access).promise();
 
 
 const result = await connection.query('SELECT * FROM GameShelf');
@@ -15,12 +16,14 @@ console.log(result[0]);
 
 const app = express();
 
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
     res.send('Successful response.');
+    next();
 });
 
-app.get('/grep', (req, res) => {
+app.get('/grep', (req, res, next) => {
     res.send('Biiiiiig grep');
+    next();
 });
 
 app.use((req, res, next) => {
