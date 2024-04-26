@@ -1,5 +1,6 @@
 import express from 'express';
 import mysql, { PoolOptions } from 'mysql2';
+import queries from './queries.cjs';
 
 const access: PoolOptions = {
     host: 'localhost',
@@ -9,10 +10,10 @@ const access: PoolOptions = {
 }
 
 const connection = mysql.createPool(access).promise();
+console.log(queries.q.getLine);
 
-
-const result = await connection.query('SELECT * FROM GameShelf');
-console.log(result[0]);
+//const result = await connection.query(queries.getAllEntries);
+//console.log(result[0]);
 
 const app = express();
 

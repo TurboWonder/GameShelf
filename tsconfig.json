@@ -8,4 +8,3 @@
     },
     "include": ["src/**/*"],
 }
-//typescript config follows Fireship's youtube video on quickly setting up a typescript env
