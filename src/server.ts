@@ -1,44 +1,22 @@
-import express from 'express';
 import mysql, { PoolOptions } from 'mysql2';
 import queries from './queries.cjs';
 
+import dotenv, { configDotenv } from 'dotenv'
+dotenv.config();
+
 const access: PoolOptions = {
-    host: 'localhost',
-    user: 'root',
-    password: 'gameSh3lfp4ss%',
-    database: 'gameShelfTest',
-}
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+};
 
 const connection = mysql.createPool(access).promise();
 console.log(queries.q.getLine);
 
-//const result = await connection.query(queries.getAllEntries);
-//console.log(result[0]);
-
-const app = express();
-
-app.get('/', (req, res, next) => {
-    res.send('Successful response.');
-    next();
-});
-
-app.get('/grep', (req, res, next) => {
-    res.send('Biiiiiig grep');
-    next();
-});
-
-app.use((req, res, next) => {
-    console.log('Time', Date.now());
-    next();
-});
-
-app.use('/grep', (req, res, next) => {
-    console.log('Req type', req.method);
-    next();
-});
-
+const result = await connection.query(queries.q.getLine);
+console.log(result[0]);
 
 connection.end();
 
-app.listen(3000, () => console.log('Example on 3000'));
 
