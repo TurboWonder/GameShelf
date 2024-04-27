@@ -1,7 +1,8 @@
 import mysql, { PoolOptions } from 'mysql2';
-import queries from './queries.cjs';
+import * as queries from './queries.js';
 
-import dotenv, { configDotenv } from 'dotenv'
+
+import dotenv, { configDotenv } from 'dotenv';
 dotenv.config();
 
 const access: PoolOptions = {
@@ -12,11 +13,13 @@ const access: PoolOptions = {
 };
 
 const connection = mysql.createPool(access).promise();
-console.log(queries.q.getLine);
 
-const result = await connection.query(queries.q.getLine);
-console.log(result[0]);
+export async function getLines() {
+    const [rows] = await connection.query(queries.getLine);
+    return rows;
+}
 
-connection.end();
-
+export async function endConnection() {
+    await connection.end();
+}
 
