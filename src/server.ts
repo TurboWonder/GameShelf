@@ -1,7 +1,5 @@
 import mysql, { PoolOptions } from 'mysql2';
 import * as queries from './queries.js';
-
-
 import dotenv, { configDotenv } from 'dotenv';
 dotenv.config();
 

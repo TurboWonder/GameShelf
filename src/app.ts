@@ -1,8 +1,51 @@
 import express from 'express';
 import { getLines, endConnection } from './server.js';
 import { debug } from 'console';
-import apicalypse from 'apicalypse';//this is used for getting data from the api
-import axios from 'axios';
+//import apicalypse from 'apicalypse';
+//import igdb from 'igdb-api-node';//this is used for getting data from the API
+import axios from 'axios';//this is sed to get the key to access that API
+
+//type of access key
+type accessKey = {
+    access_token: string,
+    expires_in: number,
+    token_type: string,
+};
+
+const clientID = process.env.CLIENT_ID;
+
+const {data}:{data:accessKey} = await axios.post('https://id.twitch.tv/oauth2/token', {
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    grant_type: "client_credentials"
+  }, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+});
+
+const authString = `Bearer ${data.access_token}`;
+console.log(process.env.CLIENT_ID + " " + data.access_token)
+
+axios.post(
+    "https://api.igdb.com/v4/games",
+    "fields *; limit 10;",
+    { 
+        headers: {
+            'Accept': 'application/json',
+            'Client-ID': clientID,
+            'Authorization': authString,
+    },
+        
+})
+    .then((response) => {
+        console.log(response.data);
+    })
+    .catch(err => {
+        console.error(err);
+    });
+
+
 
 const app = express();
 
@@ -27,33 +70,11 @@ app.use('/grep', (req, res, next) => {
     next();
 });
 
-const {data} = await axios.post('https://id.twitch.tv/oauth2/token', {
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    grant_type: "client_credentials"
-  }, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-});
-
-console.log(data);
-
-// const rawQueryString = `client_id%3D${process.env.CLIENT_ID}%26`;
-
-// // async/await
-// try {
-//     const response = await apicalypse(rawQueryString)
-//         .request('https://myapi.com/actors/nm0000216');
-
-//     // This is an axios response: https://github.com/axios/axios#response-schema
-//     console.log(response.data); 
-// } catch (err) {
-//     console.error(err);
-// }
+//console.log(data);
 
 const server = app.listen(3000, () => console.log('Example on 3000'));
 
+//end the application gracefully?
 process.on('SIGTERM', () => {
     debug('SIGTERM signal received: closing HTTP server')
     server.close(() => {
