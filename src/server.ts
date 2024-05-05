@@ -21,3 +21,11 @@ export async function endConnection() {
     await connection.end();
 }
 
+export async function createTable() {
+    await connection.query(queries.createT);
+}
+
+export async function dropTable() {
+    await connection.query(queries.dropT);
+}
+

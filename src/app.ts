@@ -1,5 +1,5 @@
 import express from 'express';
-import { getLines, endConnection } from './server.js';
+import * as serverSide from './server.js';
 import { debug } from 'console';
 //import apicalypse from 'apicalypse';
 //import igdb from 'igdb-api-node';//this is used for getting data from the API
@@ -55,7 +55,7 @@ app.get('/', (req, res, next) => {
 });
 
 app.get('/grep', async (req, res, next) => {
-    const lines = await getLines();
+    const lines = await serverSide.getLines();
     res.send(lines);
     next();
 });
@@ -70,6 +70,18 @@ app.use('/grep', (req, res, next) => {
     next();
 });
 
+app.get('/create', async (req, res, next) => {
+    serverSide.createTable();
+    res.send("success");
+    next();
+})
+
+app.get('/drop', async (req, res, next) => {
+    serverSide.dropTable();
+    res.send("success");
+    next();
+})
+
 //console.log(data);
 
 const server = app.listen(3000, () => console.log('Example on 3000'));
@@ -78,7 +90,7 @@ const server = app.listen(3000, () => console.log('Example on 3000'));
 process.on('SIGTERM', () => {
     debug('SIGTERM signal received: closing HTTP server')
     server.close(() => {
-        endConnection();  
+        serverSide.endConnection();  
         debug('HTTP server closed')
     })
 })

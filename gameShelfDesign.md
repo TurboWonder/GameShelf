@@ -14,3 +14,14 @@ Month and year can be separate attributes for sorting purposes.
 Items can be displayed using SELECT queries.  Depending on the status (which tab we are under), we can display different tables using the where clause.
 Queries can also be filtered further by date (year, month+year), or all can be displayed perhaps under its own tab.
 After inserting, items can also be edited, usually in order to change their status or rating.  There are two ways to tackle this: Editing an existing entry, or delete an entry and re create it.
+
+5/5/2024   
+Design has been altered to only include the id of a game from the idgb database, as replicated another database in one's own is bad practice.  The current plan from the dastabase is now as follow:
+    Id of game
+    date it was added to the database
+    rating
+        Presentation
+        sound
+        gameplay
+    status
+
