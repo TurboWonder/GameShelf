@@ -2,47 +2,35 @@ import express from 'express';
 import * as serverSide from './server.js';
 import { debug } from 'console';
 import axios from 'axios';//used for all api calls
+import { sendQuery } from './funcs.js';
+import igdb from './idgb.service.js'
 
 //type of access key
-type accessKey = {
-    access_token: string,
-    expires_in: number,
-    token_type: string,
-};
+// type accessKey = {
+//     access_token: string,
+//     expires_in: number,
+//     token_type: string,
+// };
 
+const fields = "fields name,involved_companies; search \"Paper Mario\"; limit 10;";
 
-const {data}:{data:accessKey} = await axios.post('https://id.twitch.tv/oauth2/token', {
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    grant_type: "client_credentials"
-}, {
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-});
+// const {data}:{data:accessKey} = await axios.post('https://id.twitch.tv/oauth2/token', {
+//     client_id: process.env.CLIENT_ID,
+//     client_secret: process.env.CLIENT_SECRET,
+//     grant_type: "client_credentials"
+// }, {
+//     headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded'
+//     }
+// });
 
-const clientID = process.env.CLIENT_ID;
-const authString = `Bearer ${data.access_token}`;
+// const clientID = process.env.CLIENT_ID;
+// const authString = `Bearer ${data.access_token}`;
 
-axios.post(
-    "https://api.igdb.com/v4/games",
-    "fields name,involved_companies; search \"Paper Mario\"; limit 10;",
-    { 
-        headers: {
-            'Accept': 'application/json',
-            'Client-ID': clientID,
-            'Authorization': authString,
-    },
-        
-})
-    .then((response) => {
-        console.log(response.data[0].id);
-    })
-    .catch(err => {
-        console.error(err);
-    });
+// const resp = sendQuery(endpoint, fields, clientID, authString);
+// console.log(resp);
 
-
+const apiPort = new igdb(process.env.CLIENT_ID, process.env.CLIENT_SECRET)
 
 const app = express();
 
@@ -83,25 +71,11 @@ app.get('/display/data', async (req, res, next) => {
 
 //displays information about a game that is searched for
 app.get('/display/game', async (req, res, next) => {
-    await axios.post(
-        "https://api.igdb.com/v4/games",
-        "fields *; search \"Paper Mario\"; limit 10;",
-        { 
-            headers: {
-                'Accept': 'application/json',
-                'Client-ID': clientID,
-                'Authorization': authString,
-        },
-            
-    })
-        .then((response) => {
-            res.send(response.data[0]);
-            
+    apiPort.getGames(fields)
+        .then(data => {
+            res.send(data);
+            next();
         })
-        .catch(err => {
-            console.error(err);
-        });
-    next();
 });
 
 const server = app.listen(3000, () => console.log('Example on 3000'));

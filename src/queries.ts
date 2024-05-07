@@ -1,7 +1,5 @@
 //This file contains the queries into the mysql database for the middleware to use
 
-
-
 export const getLine = "SELECT * FROM Shelf";
 export const createT = `CREATE TABLE IF NOT EXISTS Shelf (
     id int NOT NULL PRIMARY KEY, 
