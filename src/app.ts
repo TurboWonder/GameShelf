@@ -1,9 +1,7 @@
 import express from 'express';
 import * as serverSide from './server.js';
 import { debug } from 'console';
-//import apicalypse from 'apicalypse';
-//import igdb from 'igdb-api-node';//this is used for getting data from the API
-import axios from 'axios';//this is sed to get the key to access that API
+import axios from 'axios';//used for all api calls
 
 //type of access key
 type accessKey = {
@@ -12,24 +10,23 @@ type accessKey = {
     token_type: string,
 };
 
-const clientID = process.env.CLIENT_ID;
 
 const {data}:{data:accessKey} = await axios.post('https://id.twitch.tv/oauth2/token', {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "client_credentials"
-  }, {
+}, {
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
 });
 
+const clientID = process.env.CLIENT_ID;
 const authString = `Bearer ${data.access_token}`;
-console.log(process.env.CLIENT_ID + " " + data.access_token)
 
 axios.post(
     "https://api.igdb.com/v4/games",
-    "fields *; limit 10;",
+    "fields name,involved_companies; search \"Paper Mario\"; limit 10;",
     { 
         headers: {
             'Accept': 'application/json',
@@ -54,19 +51,8 @@ app.get('/', (req, res, next) => {
     next();
 });
 
-app.get('/grep', async (req, res, next) => {
-    const lines = await serverSide.getLines();
-    res.send(lines);
-    next();
-});
-
 app.use((req, res, next) => {
     console.log('Time', Date.now());
-    next();
-});
-
-app.use('/grep', (req, res, next) => {
-    console.log('Req type', req.method);
     next();
 });
 
@@ -74,11 +60,17 @@ app.get('/create', async (req, res, next) => {
     serverSide.createTable();
     res.send("success");
     next();
-})
+});
 
 app.get('/drop', async (req, res, next) => {
     serverSide.dropTable();
     res.send("success");
+    next();
+});
+
+app.get('/insert', async (req, res, next) => {
+    serverSide.insertItem("123455");
+    res.send("insert complete");
     next();
 })
 

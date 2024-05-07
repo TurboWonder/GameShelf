@@ -1,6 +1,7 @@
 import mysql, { PoolOptions } from 'mysql2';
 import * as queries from './queries.js';
 import dotenv, { configDotenv } from 'dotenv';
+import * as functs from './funcs.js'
 dotenv.config();
 
 const access: PoolOptions = {
@@ -9,6 +10,7 @@ const access: PoolOptions = {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
 };
+
 
 const connection = mysql.createPool(access).promise();
 
@@ -27,5 +29,9 @@ export async function createTable() {
 
 export async function dropTable() {
     await connection.query(queries.dropT);
+}
+
+export async function insertItem(gameID: string) {
+    await connection.query(functs.buildString(queries.insertGame, '$', gameID));
 }
 
