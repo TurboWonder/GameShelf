@@ -36,7 +36,7 @@ axios.post(
         
 })
     .then((response) => {
-        console.log(response.data);
+        console.log(response.data[0].id);
     })
     .catch(err => {
         console.error(err);
@@ -72,9 +72,37 @@ app.get('/insert', async (req, res, next) => {
     serverSide.insertItem("123455");
     res.send("insert complete");
     next();
-})
+});
 
-//console.log(data);
+//gets everything currently in the database
+app.get('/display/data', async (req, res, next) => {
+    const lines = await serverSide.getLines();
+    res.send(lines);
+    next();
+});
+
+//displays information about a game that is searched for
+app.get('/display/game', async (req, res, next) => {
+    await axios.post(
+        "https://api.igdb.com/v4/games",
+        "fields *; search \"Paper Mario\"; limit 10;",
+        { 
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': clientID,
+                'Authorization': authString,
+        },
+            
+    })
+        .then((response) => {
+            res.send(response.data[0]);
+            
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    next();
+});
 
 const server = app.listen(3000, () => console.log('Example on 3000'));
 

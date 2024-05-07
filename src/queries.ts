@@ -2,7 +2,7 @@
 
 
 
-export const getLine = "SELECT * FROM GameShelf";
+export const getLine = "SELECT * FROM Shelf";
 export const createT = `CREATE TABLE IF NOT EXISTS Shelf (
     id int NOT NULL PRIMARY KEY, 
     date timestamp DEFAULT CURRENT_TIMESTAMP, 
