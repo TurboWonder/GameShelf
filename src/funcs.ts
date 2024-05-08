@@ -8,26 +8,3 @@ export function buildString(Ostring: string, splitter: string, insert: any): str
     }
     return parts[0] + insert + parts[1];
 }
-
-export function sendQuery<T>(endPoint: string, fields: string, clientID: string, authString: string): Promise<T> {
-    return axios.post(
-        endPoint,
-        fields,
-    { 
-        headers: {
-            'Accept': 'application/json',
-            'Client-ID': clientID,
-            'Authorization': authString,
-        },
-            
-    })
-        .then((response) => {
-            console.log("2\n");
-            console.log(response.data);
-            return response.data;
-        })
-        .catch(err => {
-            console.error(err);
-            return err;
-        });
-}

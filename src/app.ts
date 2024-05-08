@@ -2,7 +2,6 @@ import express from 'express';
 import * as serverSide from './server.js';
 import { debug } from 'console';
 import axios from 'axios';//used for all api calls
-import { sendQuery } from './funcs.js';
 import igdb from './idgb.service.js'
 
 //type of access key
@@ -75,7 +74,7 @@ app.get('/display/game', async (req, res, next) => {
         .then(data => {
             res.send(data);
             next();
-        })
+        });
 });
 
 const server = app.listen(3000, () => console.log('Example on 3000'));
